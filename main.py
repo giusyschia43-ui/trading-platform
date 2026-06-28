@@ -1,17 +1,7 @@
 """
 Backend Flask - punto di ingresso dell'applicazione.
-
-Riscritto senza FastAPI/Pydantic/Uvicorn perche' quelle librerie, nelle
-versioni compatibili con Python molto recenti, richiedono componenti
-compilati (Rust/C) che spesso non hanno una versione pronta per
-Windows 32-bit. Flask e' puro Python, niente compilazione, funziona ovunque.
-
-Avvio:
-    pip install -r requirements.txt
-    python main.py
-
-Poi apri frontend/index.html nel browser.
 """
+import os
 import threading
 import time
 
@@ -22,14 +12,18 @@ import trading_engine as te
 
 POLL_INTERVAL_SECONDS = 15  # quanto spesso il bot valuta il mercato
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static", static_url_path="")
 
 db.init_db()
 
 
+@app.route("/")
+def home():
+    return app.send_static_file("index.html")
+
+
 @app.after_request
 def add_cors_headers(response):
-    # CORS scritto a mano (niente flask-cors) per ridurre ulteriormente le dipendenze
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
@@ -147,4 +141,5 @@ def candles():
 if __name__ == "__main__":
     t = threading.Thread(target=bot_loop, daemon=True)
     t.start()
-    app.run(host="0.0.0.0", port=8000, debug=False)
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host="0.0.0.0", port=port, debug=False)
