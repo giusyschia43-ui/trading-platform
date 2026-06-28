@@ -20,8 +20,8 @@ from datetime import datetime, timezone
 
 import database as db
 
-BINANCE_KLINES_URL = "https://api.binance.com/api/v3/klines"
-BINANCE_PRICE_URL = "https://api.binance.com/api/v3/ticker/price"
+BINANCE_KLINES_URL = "https://api.binance.us/api/v3/klines"
+BINANCE_PRICE_URL = "https://api.binance.us/api/v3/ticker/price"
 
 TIMEFRAME_MAP = {"1m": "1m", "3m": "3m", "5m": "5m", "15m": "15m"}
 
